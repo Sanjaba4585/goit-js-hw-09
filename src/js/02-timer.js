@@ -10,6 +10,7 @@ const selectors = {
   inputMinutes: document.querySelector('.field [data-minutes]'),
   inputSeconds: document.querySelector('.field [data-seconds]'),
 };
+
 selectors.btn.disabled = 'disabled';
 const SELECTED_DATA = 'selected-data-item';
 const options = {
@@ -26,6 +27,7 @@ const options = {
     }
   },
 };
+
 const flatpickrFoo = flatpickr('#datetime-picker', options);
 const ACTION_DELAY = 1000;
 
@@ -43,7 +45,7 @@ class Timer {
     this.isActive = true;
 
     this.intervalId = setInterval(() => {
-      const currentTime = Date.now();
+      const currentTime = new Date().getTime();
       const differenceTime = startTime - currentTime;
 
       if (differenceTime < 0) {
@@ -55,12 +57,12 @@ class Timer {
     }, ACTION_DELAY);
     selectors.btn.disabled = 'disabled';
   }
+
   convertMs(ms) {
     const second = 1000;
     const minute = second * 60;
     const hour = minute * 60;
     const day = hour * 24;
-
     // Remaining days
     const days = Math.floor(ms / day);
     // Remaining hours
@@ -72,17 +74,17 @@ class Timer {
 
     return { days, hours, minutes, seconds };
   }
-  addLeadingZero(value) {
-    return String(value).padStart(2, '0');
-  }
+}
+function addLeadingZero(value) {
+  return String(value).padStart(2, '0');
 }
 const timer = new Timer({
   onTick: renderInterface,
 });
 function renderInterface({ days, hours, minutes, seconds }) {
-  selectors.inputDays.textContent = `${days}`;
-  selectors.inputHours.textContent = `${hours}`;
-  selectors.inputMinutes.textContent = `${minutes}`;
-  selectors.inputSeconds.textContent = `${seconds}`;
+  selectors.inputDays.textContent = addLeadingZero(`${days}`);
+  selectors.inputHours.textContent = addLeadingZero(`${hours}`);
+  selectors.inputMinutes.textContent = addLeadingZero(`${minutes}`);
+  selectors.inputSeconds.textContent = addLeadingZero(`${seconds}`);
 }
 selectors.btn.addEventListener('click', timer.start.bind(timer));
